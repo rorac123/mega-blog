@@ -5,7 +5,7 @@ import authService from "./appwrite/auth"
 import { login, logout } from "./store/authSlice"
 import { Footer, Header } from './components'
 import { Outlet } from 'react-router-dom'
-
+import ReactLoading from "react-loading";
 function App() {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
@@ -32,7 +32,18 @@ function App() {
         <Footer />
       </div>
     </div>
-  ) : null
+  ) : (
+    
+    <div className="flex items-center justify-center h-screen bg-grey-900">
+      <ReactLoading
+        type={"spinningBubbles"}
+        color={"#03fc4e"}
+        height={150}
+        width={150}
+      />
+    </div>
+    
+)
 }
 
 export default App
