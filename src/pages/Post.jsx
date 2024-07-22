@@ -4,6 +4,7 @@ import appwriteService from "../appwrite/config";
 import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import { Heart } from 'lucide-react';
 
 export default function Post() {
     const [post, setPost] = useState(null);
@@ -32,6 +33,35 @@ export default function Post() {
         });
     };
 
+    const likePost = ()=>{
+    appwriteService.likePost(slug,{userId:userData?.$id}).then((status)=>{
+    if(status){
+        if (slug) {
+            appwriteService.getPost(slug).then((post) => {
+                if (post) setPost(post);
+                else navigate("/");
+            });
+        } else navigate("/");
+    }
+      })
+    }
+
+    const dislikePost = ()=>{
+        appwriteService.dislikePost(slug,{userId:userData?.$id}).then((status)=>{
+        if(status){
+            if (slug) {
+                appwriteService.getPost(slug).then((post) => {
+                    if (post) setPost(post);
+                    else navigate("/");
+                });
+            } else navigate("/");
+        }
+          })
+        }
+
+    // const postcomment =()=>{
+    //     appwriteService.postcomment()
+    // }
     return post ? (
         <div className="py-8">
             <Container>
@@ -54,6 +84,17 @@ export default function Post() {
                             </Button>
                         </div>
                     )}
+                </div>
+                <div className="">
+                    <button className="flex justify-center items-center gap-1" onClick={()=>{
+                        if(post.likes.includes(userData?.$id)){
+                            dislikePost()
+                        }else{
+                            likePost()
+                        }
+                    }}>
+                    <Heart className={`${post.likes.includes(userData?.$id)?"fill-red-500  stroke-none ":""}`} /> <p>{post?.likes?.length}</p>
+                    </button>
                 </div>
                 <div className="w-full mb-6">
                     <h1 className="text-2xl font-bold">{post.title}</h1>

@@ -52,6 +52,8 @@ export class Service{
         }
     }
 
+  
+
     async deletePost(slug){
         try {
             await this.databases.deleteDocument(
@@ -80,6 +82,52 @@ export class Service{
             return false
         }
     }
+
+    async likePost(slug,{userId}){
+        try {
+            const post =  await this.databases.getDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                slug
+            
+            )
+
+            return await this.databases.updateDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                slug,
+                {
+                    likes:[...post.likes,userId]
+                }
+            )
+        } catch (error) {
+            console.log("Appwrite serive :: updatePost :: error", error);
+        }
+    }
+
+    async dislikePost(slug,{userId}){
+        try {
+            const post =  await this.databases.getDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                slug
+            
+            )
+
+            const likes = post.likes.filter((like)=> like !== userId)
+            return await this.databases.updateDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                slug,
+                {
+                    likes:likes
+                }
+            )
+        } catch (error) {
+            console.log("Appwrite serive :: updatePost :: error", error);
+        }
+    }
+
 
     async getPosts(queries = [Query.equal("status", "active")]){
         try {
